@@ -3,9 +3,40 @@ import Heading from '../../components/Shared/Heading'
 import Button from '../../components/Shared/Button/Button'
 import PurchaseModal from '../../components/Modal/PurchaseModal'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import {  useParams } from 'react-router'
 
 const PlantDetails = () => {
   let [isOpen, setIsOpen] = useState(false)
+const{id}=useParams()
+
+  const {data:scholar={}}=useQuery({
+    queryKey:['scholar',id],
+    queryFn:async ()=>{
+      const result= await axios(`${import.meta.env.VITE_API_URL}/scholar/${id}`,)
+      return result.data
+    }
+  })
+console.log(scholar)
+
+ const {
+    scholarshipName,
+    universityName,
+    universityImage,
+    universityCountry,
+    universityCity,
+    universityWorldRank,
+    subjectCategory,
+    scholarshipCategory,
+    degree,
+    tuitionFees,
+    applicationFees,
+    serviceCharge,
+    applicationDeadline,
+    scholarshipPostDate,
+    postedUserEmail,
+  } = scholar;
 
   const closeModal = () => {
     setIsOpen(false)
@@ -13,83 +44,49 @@ const PlantDetails = () => {
 
   return (
     <Container>
-      <div className='mx-auto flex flex-col lg:flex-row justify-between w-full gap-12'>
+       <div className="max-w-5xl mx-auto p-6">
+      <div className="bg-white rounded-2xl shadow p-6">
+
         {/* Header */}
-        <div className='flex flex-col gap-6 flex-1'>
-          <div>
-            <div className='w-full overflow-hidden rounded-xl'>
-              <img
-                className='object-cover w-full'
-                src='https://i.ibb.co/DDnw6j9/1738597899-golden-money-plant.jpg'
-                alt='header image'
-              />
-            </div>
-          </div>
-        </div>
-        <div className='md:gap-10 flex-1'>
-          {/* Plant Info */}
-          <Heading
-            title={'Money Plant'}
-            subtitle={`Category: ${'Succulent'}`}
+        <div className="flex items-center gap-4 mb-6">
+          <img
+            src={universityImage}
+            onError={(e) => (e.target.src = "/university.png")}
+            className="w-20 h-20 rounded-full object-cover"
           />
-          <hr className='my-6' />
-          <div
-            className='
-          text-lg font-light text-neutral-500'
-          >
-            Professionally deliver sticky testing procedures for next-generation
-            portals. Objectively communicate just in time infrastructures
-            before.
-          </div>
-          <hr className='my-6' />
-
-          <div
-            className='
-                text-xl 
-                font-semibold 
-                flex 
-                flex-row 
-                items-center
-                gap-2
-              '
-          >
-            <div>Seller: Shakil Ahmed Atik</div>
-
-            <img
-              className='rounded-full'
-              height='30'
-              width='30'
-              alt='Avatar'
-              referrerPolicy='no-referrer'
-              src='https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c'
-            />
-          </div>
-          <hr className='my-6' />
           <div>
-            <p
-              className='
-                gap-4 
-                font-light
-                text-neutral-500
-              '
-            >
-              Quantity: 10 Units Left Only!
-            </p>
+            <h1 className="text-2xl font-bold">{scholarshipName}</h1>
+            <p className="text-gray-600">{universityName}</p>
           </div>
-          <hr className='my-6' />
-          <div className='flex justify-between'>
-            <p className='font-bold text-3xl text-gray-500'>Price: 10$</p>
-            <div>
-              <Button onClick={() => setIsOpen(true)} label='Purchase' />
-            </div>
-          </div>
-          <hr className='my-6' />
-
-          <PurchaseModal closeModal={closeModal} isOpen={isOpen} />
         </div>
+
+        {/* Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <p><b>Country:</b> {universityCountry}</p>
+          <p><b>City:</b> {universityCity}</p>
+          <p><b>World Rank:</b> {universityWorldRank}</p>
+          <p><b>Subject:</b> {subjectCategory}</p>
+          <p><b>Degree:</b> {degree}</p>
+          <p><b>Category:</b> {scholarshipCategory}</p>
+          <p><b>Tuition Fee:</b> {tuitionFees || "Not Provided"}</p>
+          <p><b>Application Fee:</b> ${applicationFees}</p>
+          <p><b>Service Charge:</b> ${serviceCharge}</p>
+          <p><b>Deadline:</b> {applicationDeadline}</p>
+          <p><b>Posted On:</b> {scholarshipPostDate}</p>
+          <p><b>Posted By:</b> {postedUserEmail}</p>
+        </div>
+
+        {/* Action */}
+          <button onClick={() => setIsOpen(true)} className="mt-6 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg">
+          Apply Now
+        </button>
+       
+                 <PurchaseModal scholar={scholar} closeModal={closeModal} isOpen={isOpen} />
       </div>
+    </div>
     </Container>
   )
 }
-
+ 
+             
 export default PlantDetails

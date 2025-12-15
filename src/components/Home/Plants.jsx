@@ -1,9 +1,18 @@
 import Card from './Card'
 import Container from '../Shared/Container'
 import { Link } from 'react-router'
-
+import {useQuery} from '@tanstack/react-query'
+import axios from 'axios'
 
 const Plants = () => {
+  const {data:scholars=[]}=useQuery({
+    queryKey:['scholars'],
+    queryFn:async ()=>{
+      const result= await axios(`${import.meta.env.VITE_API_URL}/scholar`,)
+      return result.data
+    }
+  })
+  // console.log(data)
   return (
     <Container>
           <div className='my-7 '>
@@ -15,18 +24,11 @@ const Plants = () => {
       </button>
           </Link>
         </div>
-      <div className='grid grid-cols-3'>
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        
-       
-      
-        
-      </div>
+      {
+        scholars && scholars.length?(<div className='grid grid-cols-3'>
+       {scholars.map(scholar=><Card key={scholar._id} scholar={scholar} ></Card>)}
+      </div>):null
+      }
     </Container>
   )
 }

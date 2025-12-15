@@ -1,54 +1,115 @@
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import axios from 'axios'
+import useAuth from '../../hooks/useAuth'
 
-const PurchaseModal = ({ closeModal, isOpen }) => {
+const PurchaseModal = ({ closeModal, isOpen,scholar }) => {
+  const {user}=useAuth()
+ const  {_id,scholarshipName,
+    universityName,
+    universityCountry,
+    universityCity,
+    degree,
+    scholarshipCategory,
+    applicationFees,
+    serviceCharge,
+    applicationDeadline,
+  } = scholar ||{}
+
+  const handlePayment= async()=>{
+const paymentInfo={
+  scholarId:_id,
+  scholarshipName,
+    universityName,
+    universityCountry,
+    universityCity,
+    degree,
+    scholarshipCategory,
+    applicationFees,
+    serviceCharge,
+    applicationDeadline,
+    student:{
+      name:user?.displayName,
+      email:user?.email
+    }
+}
+ const {data}= await axios.post(`${import.meta.env.VITE_API_URL}/create-checkout-session`,paymentInfo)
+      
+       if (data?.url) {
+     window.location.href = data.url
+    }
+  }
+
   // Total Price Calculation
-
+ const totalPrice =
+    Number(applicationFees || 0) + Number(serviceCharge || 0)
   return (
-    <Dialog
+      <Dialog
       open={isOpen}
       as='div'
-      className='relative z-10 focus:outline-none '
+      className='relative z-10 focus:outline-none'
       onClose={closeModal}
     >
       <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
         <div className='flex min-h-full items-center justify-center p-4'>
           <DialogPanel
             transition
-            className='w-full max-w-md bg-white p-6 backdrop-blur-2xl duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0 shadow-xl rounded-2xl'
+            className='w-full max-w-md bg-white p-6 shadow-xl rounded-2xl duration-300 ease-out'
           >
             <DialogTitle
               as='h3'
-              className='text-lg font-medium text-center leading-6 text-gray-900'
+              className='text-lg font-semibold text-center text-gray-900'
             >
-              Review Info Before Purchase
+              Review Scholarship Before Apply
             </DialogTitle>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Plant: Money Plant</p>
-            </div>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Category: Indoor</p>
-            </div>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Customer: PH</p>
+
+            <div className='mt-4 space-y-2 text-sm text-gray-600'>
+              <p><span className='font-medium'>Scholarship:</span> {scholarshipName}</p>
+
+              <p>
+                <span className='font-medium'>University:</span>{' '}
+                {universityName}, {universityCity}, {universityCountry}
+              </p>
+
+              <p><span className='font-medium'>Degree:</span> {degree}</p>
+
+              <p>
+                <span className='font-medium'>Category:</span>{' '}
+                {scholarshipCategory}
+              </p>
+
+              <p>
+                <span className='font-medium'>Application Fee:</span> $
+                {applicationFees || 0}
+              </p>
+
+              <p>
+                <span className='font-medium'>Service Charge:</span> $
+                {serviceCharge || 0}
+              </p>
+
+              <p className='font-semibold text-gray-800'>
+                Total Payable: ${totalPrice}
+              </p>
+
+              <p>
+                <span className='font-medium'>Deadline:</span>{' '}
+                {applicationDeadline}
+              </p>
             </div>
 
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Price: $ 120</p>
-            </div>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Available Quantity: 5</p>
-            </div>
-            <div className='flex mt-2 justify-around'>
+            <div className='flex mt-6 justify-around'>
               <button
+                onClick={handlePayment}
                 type='button'
-                className='cursor-pointer inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2'
+                className='inline-flex justify-center rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200'
               >
-                Pay
+                Pay Now
               </button>
+
               <button
                 type='button'
-                className='cursor-pointer inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2'
                 onClick={closeModal}
+                className='inline-flex justify-center rounded-md bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200'
               >
                 Cancel
               </button>
