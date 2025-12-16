@@ -1,29 +1,36 @@
 import { useState } from 'react'
 import DeleteModal from '../../Modal/DeleteModal'
-const SellerOrderDataRow = () => {
+const SellerOrderDataRow = ({order}) => {
+  console.log(order)
+  const{transactionId,
+        timestamp,
+        studentEmail,
+        
+        amountPaid,
+        paymentStatus}=order
+
+
+
   let [isOpen, setIsOpen] = useState(false)
   const closeModal = () => setIsOpen(false)
 
   return (
     <tr>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Money Plant</p>
+        <p className='text-gray-900 '>{studentEmail}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>abc@gmail.com</p>
+        <p className='text-gray-900 '>{transactionId}</p>
       </td>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>$120</p>
+        <p className='text-gray-900 '>{amountPaid}</p>
       </td>
+     
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>5</p>
+        <p className='text-gray-900 '>{paymentStatus}</p>
+
       </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Dhaka</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>Pending</p>
-      </td>
+     
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <div className='flex items-center gap-2'>
@@ -48,6 +55,10 @@ const SellerOrderDataRow = () => {
           </button>
         </div>
         <DeleteModal isOpen={isOpen} closeModal={closeModal} />
+      </td>
+      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
+        <p className='text-gray-900 '>  {new Date(timestamp).toLocaleDateString()}</p>
+
       </td>
     </tr>
   )

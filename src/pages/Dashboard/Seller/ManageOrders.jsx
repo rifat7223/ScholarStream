@@ -1,6 +1,22 @@
+import { useQuery } from '@tanstack/react-query';
 import SellerOrderDataRow from '../../../components/Dashboard/TableRows/SellerOrderDataRow'
+import useAuth from '../../../hooks/useAuth';
+import axios from 'axios';
 
 const ManageOrders = () => {
+  const {user}=useAuth()
+  const { data: orders = [],  } = useQuery({
+  queryKey: ['orders', user?.email],
+  enabled: !!user?.email, 
+  queryFn: async () => {
+    const result = await axios.get(
+      `${import.meta.env.VITE_API_URL}/my-modreator/${user.email}`
+    );
+    return result.data;
+  }
+});
+
+  console.log(orders)
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
@@ -14,38 +30,29 @@ const ManageOrders = () => {
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Name
+                     Email
                     </th>
                     <th
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Customer
+                     Transaction Id
                     </th>
                     <th
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Price
+                     Amount
                     </th>
+                    
                     <th
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Quantity
+                    paymentStatus
+
                     </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                      Address
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                      Status
-                    </th>
+                   
 
                     <th
                       scope='col'
@@ -53,10 +60,19 @@ const ManageOrders = () => {
                     >
                       Action
                     </th>
+                    <th
+                      scope='col'
+                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
+                    >
+                   Time
+
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <SellerOrderDataRow />
+                 {
+                  orders.map(order=> (<SellerOrderDataRow key={order._id} order={order} />))
+                 }
                 </tbody>
               </table>
             </div>
