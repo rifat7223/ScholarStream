@@ -5,8 +5,8 @@ import { toast } from 'react-hot-toast'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import { useForm } from "react-hook-form"
 
-import axios from 'axios'
-import { imageUpload } from '../../Utils'
+// import axios from 'axios'
+import { imageUpload, saveOrUpdateUser } from '../../Utils'
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
   const navigate = useNavigate()
@@ -16,7 +16,7 @@ const SignUp = () => {
    const {
     register,
     handleSubmit,
-    watch,
+   
     formState: { errors },
    }=useForm()
 
@@ -33,7 +33,7 @@ const SignUp = () => {
      
       //2. User Registration
       const result = await createUser(email, password)
-
+     await saveOrUpdateUser({name,email,image:imageURL})
       //3. Save username & profile photo
       await updateUserProfile(
         name,
