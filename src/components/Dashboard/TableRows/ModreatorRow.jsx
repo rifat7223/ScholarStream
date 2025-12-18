@@ -1,9 +1,26 @@
 import React from 'react';
+import toast from 'react-hot-toast';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 
 
-const ModreatorRow = ({req}) => {
-  
+
+const ModreatorRow = ({req,refetch}) => {
+    const axiosSecure=useAxiosSecure()
+  const handleUpdateRole=async() =>{
+try{
+await axiosSecure.patch('/update-role',{
+    email:req?.email,
+    role:'modreator'
+})
+toast.success('Role Updated')
+refetch()
+}catch(err){
+  console.log(err)
+  toast.error(err?.response?.data?.message)
+}
+
+  }
  
   return (
     <tr>
@@ -15,7 +32,7 @@ const ModreatorRow = ({req}) => {
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
         <span
-         
+         onClick={handleUpdateRole}
           className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'
         >
           <span

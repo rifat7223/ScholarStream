@@ -9,7 +9,7 @@ const ModreatorRequest = () => {
      const { user } = useAuth()
 const axiosSecure = useAxiosSecure()
 
-const { data: request = [] } = useQuery({
+const { data: request = [],refetch } = useQuery({
   queryKey: ['modreator-request', user?.email],
   enabled: !!user?.email,
 
@@ -22,7 +22,7 @@ const { data: request = [] } = useQuery({
 console.log(request)
 
 
-  console.log(request)
+
     return (
        <div className='container mx-auto px-4 sm:px-8'>
         <div className='py-8'>
@@ -48,7 +48,7 @@ console.log(request)
                   </tr>
                 </thead>
                 <tbody>
-                    {request.map(req=> <ModreatorRow key={req._id} req={req} ></ModreatorRow>)}
+                    {request.map(req=> <ModreatorRow key={req._id} refetch={refetch} req={req} ></ModreatorRow>)}
                  
                 </tbody>
               </table>

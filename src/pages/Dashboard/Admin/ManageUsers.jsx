@@ -1,6 +1,23 @@
+import { useQuery } from '@tanstack/react-query'
 import UserDataRow from '../../../components/Dashboard/TableRows/UserDataRow'
+import useAuth from '../../../hooks/useAuth'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
 
 const ManageUsers = () => {
+    const { user } = useAuth()
+const axiosSecure = useAxiosSecure()
+
+const { data: users = [],refetch } = useQuery({
+  queryKey: ['modreator-request', user?.email],
+  enabled: !!user?.email,
+
+  queryFn: async () => {
+    const res = await axiosSecure.get('/users')
+    return res.data
+  }
+})
+
+console.log(users)
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
@@ -22,12 +39,7 @@ const ManageUsers = () => {
                     >
                       Role
                     </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                      Status
-                    </th>
+                    
 
                     <th
                       scope='col'
@@ -38,7 +50,10 @@ const ManageUsers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <UserDataRow />
+                  {
+                    users.map(user=> < UserDataRow key={user?._id} user={user} refetch={refetch} />)
+                  }
+                 
                 </tbody>
               </table>
             </div>
