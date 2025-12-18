@@ -16,6 +16,7 @@ import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import { createBrowserRouter } from 'react-router'
 import ALLScholar from '../pages/Allscholar/ALLScholar'
 import PaymentSuccess from '../pages/Payment/PaymentSuccess'
+import ModreatorRequest from '../pages/Dashboard/Admin/ModreatorRequest'
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +81,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ManageUsers />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: 'modreator-request',
+        element: (
+          <PrivateRoute>
+            <ModreatorRequest />
           </PrivateRoute>
         ),
       },
