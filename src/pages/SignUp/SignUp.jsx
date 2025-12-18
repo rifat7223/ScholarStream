@@ -23,12 +23,10 @@ const SignUp = () => {
     const onSubmit = async(data) => {
       const {name,email,password,image}=data
       const imageFile=image[0]
-      // console.log(imageFile)
-      // const formData= new FormData()
-      // formData.append('image',imageFile)
+     
 
     try {
-      // const {data}= await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMGBB_API_KEY}`,formData)
+      
       const imageURL=await imageUpload(imageFile)
      
       //2. User Registration
@@ -51,47 +49,32 @@ const SignUp = () => {
 
     }
        
-  // form submit handler
-  // const handleSubmit = async event => {
-  //   event.preventDefault()
-  //   const form = event.target
-  //   const name = form.name.value
-  //   const email = form.email.value
-  //   const password = form.password.value
-
-  //   try {
-  //     //2. User Registration
-  //     const result = await createUser(email, password)
-
-  //     //3. Save username & profile photo
-  //     await updateUserProfile(
-  //       name,
-  //       'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c'
-  //     )
-  //     console.log(result)
-
-  //     navigate(from, { replace: true })
-  //     toast.success('Signup Successful')
-  //   } catch (err) {
-  //     console.log(err)
-  //     toast.error(err?.message)
-  //   }
-  // }
-
+ 
   // Handle Google Signin
      
   const handleGoogleSignIn = async () => {
-    try {
-      //User Registration using google
-      await signInWithGoogle()
-
-      navigate(from, { replace: true })
-      toast.success('Signup Successful')
-    } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
+  try {
+    const {user} = await signInWithGoogle()
+    
+     await saveOrUpdateUser({name:user?.displayName,
+     email:user?.email,
+     image:user?.photoURL})
+    
+    if (!user?.email) {
+      toast.error('Google login failed: no email')
+      return
     }
+
+    
+
+    navigate(from, { replace: true })
+    toast.success('Signup Successful')
+  } catch (err) {
+    console.error('Google SignIn Error:', err)
+    toast.error(err.message)
   }
+}
+
       
   return (
     <div className='flex justify-center items-center min-h-screen bg-white'>

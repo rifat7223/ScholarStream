@@ -17,7 +17,7 @@ const Card = ({scholar,Allscholar}) => {
   applicationDeadline,
   scholarshipPostDate,
   postedUserEmail,}=data
-  console.log(scholar,Allscholar)
+  // console.log(scholar,Allscholar)
   return (
     
     <div>
