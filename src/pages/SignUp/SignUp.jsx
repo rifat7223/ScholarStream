@@ -56,7 +56,8 @@ const SignUp = () => {
   try {
     const {user} = await signInWithGoogle()
     
-     await saveOrUpdateUser({name:user?.displayName,
+     await saveOrUpdateUser(
+      {name:user?.displayName,
      email:user?.email,
      image:user?.photoURL})
     
