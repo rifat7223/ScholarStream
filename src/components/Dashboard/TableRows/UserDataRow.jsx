@@ -29,7 +29,8 @@ const UserDataRow = ({user,refetch}) => {
         <UpdateUserRoleModal
           isOpen={isOpen}
           closeModal={closeModal}
-          role='customer'
+          refetch={refetch}
+          user={user}
         />
       </td>
     </tr>
