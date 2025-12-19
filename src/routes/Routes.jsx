@@ -17,6 +17,8 @@ import { createBrowserRouter } from 'react-router'
 import ALLScholar from '../pages/Allscholar/ALLScholar'
 import PaymentSuccess from '../pages/Payment/PaymentSuccess'
 import ModreatorRequest from '../pages/Dashboard/Admin/ModreatorRequest'
+import ModreatorRoute from './ModreatorRoute'
+import AdminRoute from './AdminRoute'
 
 export const router = createBrowserRouter([
   {
@@ -64,7 +66,9 @@ export const router = createBrowserRouter([
         path: 'add-plant',
         element: (
           <PrivateRoute>
-            <AddPlant />
+           <ModreatorRoute>
+             <AddPlant />
+           </ModreatorRoute>
           </PrivateRoute>
         ),
       },
@@ -72,7 +76,9 @@ export const router = createBrowserRouter([
         path: 'my-inventory',
         element: (
           <PrivateRoute>
-            <MyInventory />
+           <ModreatorRoute>
+             <MyInventory />
+           </ModreatorRoute>
           </PrivateRoute>
         ),
       },
@@ -80,7 +86,9 @@ export const router = createBrowserRouter([
         path: 'manage-users',
         element: (
           <PrivateRoute>
-            <ManageUsers />
+           <AdminRoute>
+             <ManageUsers />
+           </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -88,7 +96,9 @@ export const router = createBrowserRouter([
         path: 'modreator-request',
         element: (
           <PrivateRoute>
-            <ModreatorRequest />
+           <AdminRoute>
+             <ModreatorRequest />
+           </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -110,7 +120,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'manage-orders',
-        element: <ManageOrders />,
+        element:<PrivateRoute>
+          <ModreatorRoute>
+             <ManageOrders />
+          </ModreatorRoute>
+        </PrivateRoute>,
       },
     ],
   },
