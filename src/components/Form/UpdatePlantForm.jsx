@@ -1,119 +1,186 @@
-const UpdatePlantForm = () => {
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+
+const UpdatePlantForm = ({ scholar, closeForm }) => {
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+
+  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
+
+  // Populate the form when scholar is available
+  useEffect(() => {
+    if (scholar) {
+      reset({
+        scholarshipName: scholar.scholarshipName,
+        universityName: scholar.universityName,
+        universityCountry: scholar.universityCountry,
+        universityCity: scholar.universityCity,
+        universityWorldRank: scholar.universityWorldRank,
+        subjectCategory: scholar.subjectCategory,
+        scholarshipCategory: scholar.scholarshipCategory,
+        degree: scholar.degree,
+        tuitionFees: scholar.tuitionFees,
+        applicationFees: scholar.applicationFees,
+        serviceCharge: scholar.serviceCharge,
+        applicationDeadline: scholar.applicationDeadline,
+        scholarshipPostDate: scholar.scholarshipPostDate,
+        postedUserEmail: scholar.postedUserEmail,
+        universityImage: scholar.universityImage,
+      });
+    }
+  }, [scholar, reset]);
+
+  // Mutation to update scholarship
+  const updateMutation = useMutation({
+    mutationFn: async (data) => axiosSecure.patch(`/scholar/${scholar._id}`, data),
+    onSuccess: () => {
+      toast.success("Scholarship updated successfully!");
+      queryClient.invalidateQueries(["inventory"]); // adjust query key
+      closeForm();
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to update");
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      // if you want to handle new image upload, integrate your imageUpload logic here
+      await updateMutation.mutateAsync({
+        ...data,
+        tuitionFees: Number(data.tuitionFees),
+        applicationFees: Number(data.applicationFees),
+        serviceCharge: Number(data.serviceCharge),
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Update failed");
+    }
+  };
+
+  if (!scholar) return null;
+
   return (
-    <div className='w-full flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50'>
-      <form>
-        <div className='grid grid-cols-1 gap-10'>
-          <div className='space-y-6'>
-            {/* Name */}
-            <div className='space-y-1 text-sm'>
-              <label htmlFor='name' className='block text-gray-600'>
-                Name
-              </label>
-              <input
-                className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
-                name='name'
-                id='name'
-                type='text'
-                placeholder='Plant Name'
-                required
-              />
-            </div>
-            {/* Category */}
-            <div className='space-y-1 text-sm'>
-              <label htmlFor='category' className='block text-gray-600 '>
-                Category
-              </label>
-              <select
-                required
-                className='w-full px-4 py-3 border-lime-300 focus:outline-lime-500 rounded-md bg-white'
-                name='category'
-              >
-                <option value='Indoor'>Indoor</option>
-                <option value='Outdoor'>Outdoor</option>
-                <option value='Succulent'>Succulent</option>
-                <option value='Flowering'>Flowering</option>
-              </select>
-            </div>
-            {/* Description */}
-            <div className='space-y-1 text-sm'>
-              <label htmlFor='description' className='block text-gray-600'>
-                Description
-              </label>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow my-4">
+      <h2 className="text-2xl font-bold mb-6">Update Scholarship</h2>
 
-              <textarea
-                id='description'
-                placeholder='Write plant description here...'
-                className='block rounded-md focus:lime-300 w-full h-32 px-4 py-3 text-gray-800  border border-lime-300 bg-white focus:outline-lime-500 '
-                name='description'
-              ></textarea>
-            </div>
-          </div>
-          <div className='space-y-6 flex flex-col'>
-            {/* Price & Quantity */}
-            <div className='flex justify-between gap-2'>
-              {/* Price */}
-              <div className='space-y-1 text-sm'>
-                <label htmlFor='price' className='block text-gray-600 '>
-                  Price
-                </label>
-                <input
-                  className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
-                  name='price'
-                  id='price'
-                  type='number'
-                  placeholder='Price per unit'
-                  required
-                />
-              </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Scholarship Name */}
+        <div>
+          <label className="label">Scholarship Name</label>
+          <input {...register("scholarshipName", { required: true })} className="input" />
+        </div>
 
-              {/* Quantity */}
-              <div className='space-y-1 text-sm'>
-                <label htmlFor='quantity' className='block text-gray-600'>
-                  Quantity
-                </label>
-                <input
-                  className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
-                  name='quantity'
-                  id='quantity'
-                  type='number'
-                  placeholder='Available quantity'
-                  required
-                />
-              </div>
-            </div>
-            {/* Image */}
-            <div className=' p-4  w-full  m-auto rounded-lg grow'>
-              <div className='file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg'>
-                <div className='flex flex-col w-max mx-auto text-center'>
-                  <label>
-                    <input
-                      className='text-sm cursor-pointer w-36 hidden'
-                      type='file'
-                      name='image'
-                      id='image'
-                      accept='image/*'
-                      hidden
-                    />
-                    <div className='bg-lime-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-lime-500'>
-                      Upload Image
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
+        {/* University Name */}
+        <div>
+          <label className="label">University Name</label>
+          <input {...register("universityName", { required: true })} className="input" />
+        </div>
 
-            {/* Submit Button */}
-            <button
-              type='submit'
-              className='w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-lime-500 '
-            >
-              Update Plant
-            </button>
-          </div>
+        {/* University Image */}
+        <div>
+          <label className="label">University Image URL</label>
+          <input {...register("universityImage", { required: true })} className="input" />
+        </div>
+
+        {/* Country */}
+        <div>
+          <label className="label">Country</label>
+          <input {...register("universityCountry", { required: true })} className="input" />
+        </div>
+
+        {/* City */}
+        <div>
+          <label className="label">City</label>
+          <input {...register("universityCity", { required: true })} className="input" />
+        </div>
+
+        {/* World Rank */}
+        <div>
+          <label className="label">World Rank</label>
+          <input type="number" {...register("universityWorldRank", { required: true })} className="input" />
+        </div>
+
+        {/* Subject Category */}
+        <div>
+          <label className="label">Subject Category</label>
+          <input {...register("subjectCategory", { required: true })} className="input" />
+        </div>
+
+        {/* Scholarship Category */}
+        <div>
+          <label className="label">Scholarship Category</label>
+          <select {...register("scholarshipCategory", { required: true })} className="input">
+            <option value="">Select</option>
+            <option value="Full Fund">Full Fund</option>
+            <option value="Partial">Partial</option>
+            <option value="Self-fund">Self-fund</option>
+          </select>
+        </div>
+
+        {/* Degree */}
+        <div>
+          <label className="label">Degree</label>
+          <select {...register("degree", { required: true })} className="input">
+            <option value="">Select</option>
+            <option value="Diploma">Diploma</option>
+            <option value="Bachelor">Bachelor</option>
+            <option value="Masters">Masters</option>
+          </select>
+        </div>
+
+        {/* Tuition Fees */}
+        <div>
+          <label className="label">Tuition Fees</label>
+          <input type="number" {...register("tuitionFees")} className="input" />
+        </div>
+
+        {/* Application Fees */}
+        <div>
+          <label className="label">Application Fees</label>
+          <input type="number" {...register("applicationFees", { required: true })} className="input" />
+        </div>
+
+        {/* Service Charge */}
+        <div>
+          <label className="label">Service Charge</label>
+          <input type="number" {...register("serviceCharge", { required: true })} className="input" />
+        </div>
+
+        {/* Application Deadline */}
+        <div>
+          <label className="label">Application Deadline</label>
+          <input type="date" {...register("applicationDeadline", { required: true })} className="input" />
+        </div>
+
+        {/* Post Date */}
+        <div>
+          <label className="label">Post Date</label>
+          <input type="date" {...register("scholarshipPostDate", { required: true })} className="input" />
+        </div>
+
+        {/* Posted User Email */}
+        <div className="md:col-span-2">
+          <label className="label">Posted User Email</label>
+          <input type="email" {...register("postedUserEmail", { required: true })} className="input" />
+        </div>
+
+        {/* Submit */}
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold"
+          >
+            {isSubmitting ? "Updating..." : "Update Scholarship"}
+          </button>
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default UpdatePlantForm
+export default UpdatePlantForm;

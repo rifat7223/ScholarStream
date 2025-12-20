@@ -1,6 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import PlantDataRow from '../../../components/Dashboard/TableRows/PlantDataRow'
+import useAuth from '../../../hooks/useAuth';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const MyInventory = () => {
+   const {user}=useAuth()
+const axiosSecure=  useAxiosSecure()
+  const { data: scholars = [],  } = useQuery({
+  queryKey: ['inventory', user?.email],
+  enabled: !!user?.email, 
+  queryFn: async () => {
+    const result = await  axiosSecure( `/my-scholar`);
+     
+
+    return result.data;
+  }
+});
+
+  console.log(scholars)
   return (
     <>
       <div className='container mx-auto px-4 sm:px-8'>
@@ -20,26 +37,21 @@ const MyInventory = () => {
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Name
+                    ScholarShip Name
                     </th>
                     <th
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Category
+                     University  Name
                     </th>
                     <th
                       scope='col'
                       className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
                     >
-                      Price
+                    Tution Fee
                     </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                      Quantity
-                    </th>
+                   
 
                     <th
                       scope='col'
@@ -56,7 +68,7 @@ const MyInventory = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <PlantDataRow />
+                 {scholars.map(scholar=> <PlantDataRow  scholar={scholar} key={scholar?._id} />)}
                 </tbody>
               </table>
             </div>
