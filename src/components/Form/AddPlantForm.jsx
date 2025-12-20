@@ -1,34 +1,44 @@
 import { useForm } from "react-hook-form";
 import { imageUpload } from "../../Utils";
 import useAuth from "../../hooks/useAuth";
-import axios from "axios";
+
 import { useMutation } from "@tanstack/react-query";
 
-import LoadingSpinner from "../Shared/LoadingSpinner";
+
 import toast from "react-hot-toast";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AddPlantForm = () => {
-  const { user } = useAuth();
-const {isPending,isError,reset:mutationreset, mutateAsync}=useMutation({
-  mutationFn:async playload=>
-    await axios.post(`${import.meta.env.VITE_API_URL}/scholar`, playload),
-  onSuccess:data =>{
-    toast.success('success fully added')
-    console.log(data)
+ const { user } = useAuth()
+const axiosSecure = useAxiosSecure()
+
+const {
+  isPending,
+  isError,
+  reset: mutationreset,
+  mutateAsync
+} = useMutation({
+  mutationFn: async (payload) =>
+    axiosSecure.post('/scholar', payload),
+
+  onSuccess: (res) => {
+    toast.success('Successfully added')
+    console.log(res.data)
     mutationreset()
   },
-  onError:error =>{
-    console.log(error)
+
+  onError: (error) => {
+    console.log('ERROR:', error.response?.status)
+    console.log(error.response?.data)
   },
-  onMutate:playload=>{
-    console.log('i will post this data',playload)
+
+  onMutate: (payload) => {
+    console.log('I will post this data:', payload)
   },
-  onSettled:(data,error)=>{
-    if(data) console.log(data)
-    if(error) console.log(error)
-  },
-retry:3,
+
+  retry: 3
 })
+
   const {
     register,
     handleSubmit,
