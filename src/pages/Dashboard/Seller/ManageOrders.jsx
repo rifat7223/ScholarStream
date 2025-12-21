@@ -1,86 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
-import SellerOrderDataRow from '../../../components/Dashboard/TableRows/SellerOrderDataRow'
 import useAuth from '../../../hooks/useAuth';
-import axios from 'axios';
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import SellerOrderDataRow from '../../../components/Dashboard/TableRows/SellerOrderDataRow';
 
 const ManageOrders = () => {
-  const {user}=useAuth()
-  const { data: orders = [],  } = useQuery({
-  queryKey: ['orders', user?.email],
-  enabled: !!user?.email, 
-  queryFn: async () => {
-    const result = await axios.get(
-      `${import.meta.env.VITE_API_URL}/my-modreator/${user.email}`
-    );
-    return result.data;
-  }
-});
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
-  console.log(orders)
+  const { data: orders = [], refetch } = useQuery({
+    queryKey: ['moderator-orders', user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get('/my-moderator');
+      return res.data;
+    },
+  });
+
   return (
-    <>
-      <div className='container mx-auto px-4 sm:px-8'>
-        <div className='py-8'>
-          <div className='-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto'>
-            <div className='inline-block min-w-full shadow rounded-lg overflow-hidden'>
-              <table className='min-w-full leading-normal'>
-                <thead>
-                  <tr>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                     Email
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                     Transaction Id
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                     Amount
-                    </th>
-                    
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                    paymentStatus
+    <table className="table-auto w-full">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Transaction</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map(order => (
+          <SellerOrderDataRow key={order._id} order={order} refetch={refetch} />
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
-                    </th>
-                   
-
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                      Action
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal'
-                    >
-                   Time
-
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                 {
-                  orders.map(order=> (<SellerOrderDataRow key={order._id} order={order} />))
-                 }
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
-export default ManageOrders
+export default ManageOrders;

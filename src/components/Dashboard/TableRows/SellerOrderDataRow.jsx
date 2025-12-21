@@ -1,64 +1,79 @@
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import toast from 'react-hot-toast'
 import { useState } from 'react'
-import DeleteModal from '../../Modal/DeleteModal'
-const SellerOrderDataRow = ({order}) => {
-  console.log(order)
-  const{transactionId,
-        timestamp,
-        studentEmail,
-        
-        amountPaid,
-        paymentStatus}=order
 
+const SellerOrderDataRow = ({ order, refetch }) => {
+  const axiosSecure = useAxiosSecure()
+  const [loading, setLoading] = useState(false)
 
+  const handleChangeStatus = async e => {
+    const newStatus = e.target.value
+    try {
+      await axiosSecure.patch(`/orders/status/${order._id}`, {
+        status: newStatus,
+      })
+      toast.success('Order status updated')
+      refetch()
+    } catch (err) {
+      toast.error('Failed to update status')
+    }
+  }
 
-  let [isOpen, setIsOpen] = useState(false)
-  const closeModal = () => setIsOpen(false)
+  const handleCancel = async () => {
+    const confirm = window.confirm('Are you sure you want to cancel this order?')
+    if (!confirm) return
+
+    try {
+      setLoading(true)
+      await axiosSecure.delete(`/orders/${order._id}`)
+      toast.success('Order cancelled')
+      refetch()
+    } catch (err) {
+      toast.error('Failed to cancel order')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <tr>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{studentEmail}</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{transactionId}</p>
-      </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{amountPaid}</p>
-      </td>
-     
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>{paymentStatus}</p>
+    <tr className="border-b">
+      <td className="px-4 py-3">{order.studentEmail}</td>
+      <td className="px-4 py-3">{order.transactionId}</td>
+      <td className="px-4 py-3">৳{order.amountPaid}</td>
 
+      {/* Status */}
+      <td className="px-4 py-3">
+        <select
+          value={order.status}
+          onChange={handleChangeStatus}
+          className="border px-2 py-1 rounded text-sm"
+        >
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Delivered">Delivered</option>
+        </select>
       </td>
-     
 
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <div className='flex items-center gap-2'>
-          <select
-            required
-            className='p-1 border-2 border-lime-300 focus:outline-lime-500 rounded-md text-gray-900  bg-white'
-            name='category'
-          >
-            <option value='Pending'>Pending</option>
-            <option value='In Progress'>Start Processing</option>
-            <option value='Delivered'>Deliver</option>
-          </select>
-          <button
-            onClick={() => setIsOpen(true)}
-            className='relative disabled:cursor-not-allowed cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'
-          >
-            <span
-              aria-hidden='true'
-              className='absolute inset-0 bg-red-200 opacity-50 rounded-full'
-            ></span>
-            <span className='relative'>Cancel</span>
-          </button>
-        </div>
-        <DeleteModal isOpen={isOpen} closeModal={closeModal} />
+      {/* Payment */}
+      <td className="px-4 py-3">
+        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
+          {order.paymentStatus}
+        </span>
       </td>
-      <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <p className='text-gray-900 '>  {new Date(timestamp).toLocaleDateString()}</p>
 
+      {/* Cancel */}
+      <td className="px-4 py-3">
+        <button
+          onClick={handleCancel}
+          disabled={loading}
+          className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      </td>
+
+      <td className="px-4 py-3">
+        {new Date(order.timestamp).toLocaleDateString()}
       </td>
     </tr>
   )

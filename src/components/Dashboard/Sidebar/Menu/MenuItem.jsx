@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { NavLink } from 'react-router'
+import AddPlant from '../../../../pages/Dashboard/Seller/AddPlant'
 
 const MenuItem = ({ label, address, icon: Icon }) => {
   return (
@@ -15,6 +16,7 @@ const MenuItem = ({ label, address, icon: Icon }) => {
       <Icon className='w-5 h-5' />
 
       <span className='mx-4 font-medium'>{label}</span>
+     
     </NavLink>
   )
 }
