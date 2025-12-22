@@ -1,16 +1,65 @@
-# React + Vite
+🎓 Scholar – Scholarship Management Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Scholar is a full-stack scholarship management web application where students can explore, apply, and manage scholarships, while admins and moderators can control applications, users, and payments.
 
-Currently, two official plugins are available:
+🌐 Live Links
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Client: https://scholar-client.netlify.app
 
-## React Compiler
+Server: https://scholar-server-nine.vercel.app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+📌 Project Features
+👨‍🎓 Student
 
-## Expanding the ESLint configuration
+Browse scholarships with search, filter & sorting
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+View scholarship details
+
+Apply for scholarships
+
+Secure online payment using Stripe
+
+View application status
+
+Manage profile
+
+🧑‍💼 Admin / Moderator
+
+Manage scholarships (Add / Update / Delete)
+
+Manage users & roles
+
+Review applications
+
+Update application status
+
+View payment history
+
+🔐 Authentication & Security
+
+Firebase Authentication (Email/Password & Google)
+
+JWT-based API protection
+
+Role-based authorization (Admin, Moderator, Student)
+
+🧩 Tech Stack
+Frontend
+
+React
+
+React Router
+
+Tailwind CSS
+
+TanStack React Query
+
+Axios
+
+Firebase Authentication
+
+Stripe.js
+
+React Hook Form
+
+React Hot Toast
