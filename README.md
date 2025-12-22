@@ -4,9 +4,9 @@ Scholar is a full-stack scholarship management web application where students ca
 
 🌐 Live Links
 
-Client: https://scholar-client.netlify.app
+Client: https://remarkable-kringle-e11bb1.netlify.app/
 
-Server: https://scholar-server-nine.vercel.app
+Server: https://scholar-server-drd4ucy5g-rifats-projects-f9bc4c67.vercel.app/
 
 📌 Project Features
 👨‍🎓 Student
