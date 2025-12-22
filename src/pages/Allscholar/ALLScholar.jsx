@@ -23,7 +23,7 @@ const ALLScholar = () => {
       });
 
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/scholar?${params}`
+        `${import.meta.env.VITE_API_URL}/filter-?${params}`
       );
       return res.data;
     }
